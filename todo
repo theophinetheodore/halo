@@ -1,4 +1,7 @@
 x cursor black color change
-- player controls
+x player controls
 - search box inside a bigger box for padding gimmick
 x canvas scroll
+- kill thread when app exits
+- app name
+- app icon set
