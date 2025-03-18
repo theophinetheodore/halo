@@ -38,6 +38,10 @@ curr_subtitle = tk.StringVar(value="---------")
 curr_time = tk.DoubleVar(value=0.0)
 curr_duration = tk.DoubleVar(value=100.0)
 
+curr_status = tk.StringVar(value="▶︎")
+
+scale = None
+
 ######################################################################
 
 def decrypt_url(url):
@@ -67,9 +71,12 @@ def play_song(enc, title, subtitle):
     continuously_update_time()
 
 def continuously_update_time():
+    global scale
+
     curr_time.set(player.query_position(Gst.Format.TIME)[1] / Gst.SECOND)
     curr_duration.set(player.query_duration(Gst.Format.TIME)[1] / Gst.SECOND)
-    # scale.configure(to = yeah)
+    scale.configure(to = curr_duration.get())
+    start.configure(text=f"{(curr_time.get() / curr_duration.get()) * 100:.2f}%")
     root.after(1000, continuously_update_time)
 
 ######################################################################
@@ -80,8 +87,10 @@ def toggle_play():
 
     if is_playing:
         player.set_state(Gst.State.PAUSED)
+        curr_status.set("▶︎")
     else:
         player.set_state(Gst.State.PLAYING)
+        curr_status.set("⏸")
     
     is_playing = not is_playing
 
@@ -149,7 +158,7 @@ def search(event=None):
 root.configure(bg='#030303')
 root.title("music")
 
-input = tk.Entry(root, width=40, bg="#292929", bd=1, highlightbackground='#484848', highlightcolor="dodgerblue",
+input = tk.Entry(root, width=40, bg="#292929", bd=1, highlightbackground='#484848', highlightcolor="gray", justify="center",
                  fg="white", font=('GitLab Sans', 14), relief='flat', insertbackground='white')
 input.pack(pady=20)
 input.bind('<Return>', search)
@@ -175,8 +184,25 @@ playbox = tk.Frame(root, bg="black", highlightbackground="#292929",
                    highlightcolor="#292929", highlightthickness=1, relief="groove")
 playbox.place(relx=0.5, rely=1.0, anchor='s', width=800, y=-20)
 
-scale = ttk.Scale(playbox, variable=curr_time, from_=curr_time.get(), to=curr_duration.get(), orient=tk.HORIZONTAL)
-scale.pack(fill=tk.X, padx=20)
+durbox = tk.Frame(playbox, bg="black")
+durbox.pack(fill="both", expand=True)
+
+start = tk.Label(durbox, text="0.0%", font=("GitLab Sans", 8), bg="black", fg="white")
+start.pack(side="left", padx=(5, 0))
+
+scale = ttk.Scale(durbox, variable=curr_time, from_=curr_time.get(), to=curr_duration.get(), orient=tk.HORIZONTAL)
+scale.pack(side="left", fill=tk.X, expand=True)
+
+def on_scale_change(event):
+    position_ns = curr_time.get() * Gst.SECOND
+    success = player.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT, position_ns)
+
+scale.bind("<ButtonRelease-1>", on_scale_change)
+
+end = tk.Label(durbox, textvariable=curr_duration, font=("GitLab Sans", 8), bg="black", fg="white")
+end.pack(side="right", padx=(0, 5))
+
+######################################################################
 
 title_label = tk.Label(playbox, textvariable=curr_title,
                        font=("GitLab Sans", 12), bg="black", fg="white")
@@ -186,7 +212,8 @@ subtitle_label = tk.Label(playbox, textvariable=curr_subtitle,
                           font=("GitLab Sans", 10), bg="black", fg="white")
 subtitle_label.pack()
 
-play_pause_button = tk.Button(playbox, text="Play", command=toggle_play)
-play_pause_button.pack(side=tk.BOTTOM, pady=10)
+play_button = tk.Label(playbox, textvariable=curr_status, bg="black", fg="white", font=("monospace", 22))
+play_button.pack(side=tk.BOTTOM, pady=10)
+play_button.bind("<Button-1>", lambda event: toggle_play())
 
 root.mainloop()
