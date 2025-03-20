@@ -110,6 +110,7 @@ def search(event=None):
     
     threading.Thread(target=add_search_items, args=(json_data,)).start()
 
+
 def add_search_items(json_data):
     for song in json_data['results']:
         title = song['title']
@@ -134,7 +135,9 @@ def add_search_items(json_data):
 
         song_title = tk.Label(song_details, text=title, bg="black", fg="white",
                               font=('GitLab Sans', 12), justify="left")
-        song_subtitle = tk.Label(song_details, text=subtitle[:70] + "...", bg="black", fg="gray", font=('GitLab Sans', 10), justify="left")
+
+        song_subtitle = tk.Label(song_details, text=subtitle[:70] + "...",
+                                 bg="black", fg="gray", font=('GitLab Sans', 10), justify="left")
 
         song_title.pack(anchor="w")
         song_subtitle.pack(anchor="w")
@@ -191,11 +194,13 @@ canvas.pack(side="left", fill="y", expand=True, pady=(10, 125))
 
 ######################################################################
 
-playbox = tk.Frame(root, bg="black", highlightbackground="#292929",
+miniplayer = tk.Frame(root, bg="black", highlightbackground="#292929",
                    highlightcolor="#292929", highlightthickness=1, relief="groove")
-playbox.place(relx=0.5, rely=1.0, anchor='s', width=800, y=-10)
+miniplayer.place(relx=0.5, rely=1.0, anchor='s', width=800, y=-10)
 
-slider = tk.Frame(playbox, bg="red", height=6)
+######################################################################
+
+slider = tk.Frame(miniplayer, bg="red", height=6)
 slider.pack(side="top", anchor="w")
 
 def on_click(event): update_seekbar(event.x)
@@ -211,27 +216,35 @@ def update_seekbar(x):
     newtime = ((new_width / 800) * curr_duration.get()) * Gst.SECOND
     player.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT, newtime)
 
-durbox = tk.Frame(playbox, bg="black")
-durbox.pack(fill="both", expand=True)
+######################################################################
 
-start = tk.Label(durbox, font=("GitLab Sans", 8), bg="black", fg="white")
+duration_box = tk.Frame(miniplayer, bg="black")
+duration_box.pack(fill="both", expand=True)
+
+start = tk.Label(duration_box, font=("GitLab Sans", 8), bg="black", fg="white")
 start.pack(side="left", padx=(5, 0))
 
-end = tk.Label(durbox, textvariable=curr_duration, font=("GitLab Sans", 8), bg="black", fg="white")
+end = tk.Label(duration_box, textvariable=curr_duration,
+               font=("GitLab Sans", 8), bg="black", fg="white")
 end.pack(side="right", padx=(0, 5))
 
-songdetbox = tk.Frame(playbox, bg="black")
-songdetbox.pack(fill="both", expand=True)
+######################################################################
 
-title_label = tk.Label(songdetbox, textvariable=curr_title,
+song_details_box = tk.Frame(miniplayer, bg="black")
+song_details_box.pack(fill="both", expand=True)
+
+title_label = tk.Label(song_details_box, textvariable=curr_title,
                        font=("GitLab Sans", 10), bg="black", fg="white")
 title_label.pack(side="left", padx=(5, 0))
 
-subtitle_label = tk.Label(songdetbox, textvariable=curr_subtitle,
+subtitle_label = tk.Label(song_details_box, textvariable=curr_subtitle,
                           font=("GitLab Sans", 10), bg="black", fg="white")
 subtitle_label.pack(side="right", padx=(0, 5))
 
-play_button = tk.Label(playbox, textvariable=curr_status, bg="black", fg="white", font=("monospace", 22))
+######################################################################
+
+play_button = tk.Label(miniplayer, textvariable=curr_status,
+                       bg="black", fg="white", font=("monospace", 22))
 play_button.pack(side=tk.BOTTOM)
 play_button.bind("<Button-1>", lambda event: toggle_play())
 
