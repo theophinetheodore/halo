@@ -73,18 +73,19 @@ def update():
 
 ######################################################################
 
-def toggle_play():
+def toggle_play(event):
     global player
     global is_playing
 
-    if is_playing:
-        player.set_state(Gst.State.PAUSED)
-        curr_status.set("▶︎")
-    else:
-        player.set_state(Gst.State.PLAYING)
-        curr_status.set("⏸")
-    
-    is_playing = not is_playing
+    if not isinstance(event.widget, tk.Entry):
+        if is_playing:
+            player.set_state(Gst.State.PAUSED)
+            curr_status.set("▶︎")
+        else:
+            player.set_state(Gst.State.PLAYING)
+            curr_status.set("⏸")
+        
+        is_playing = not is_playing
 
 ######################################################################
 
@@ -175,7 +176,7 @@ def add_search_items(json_data):
     if more_button == None:
         more_button = tk.Button(results_frame, text="More", bg="#292929", fg="white", bd=1,
                      highlightbackground='#484848', highlightcolor="gray", justify="center",
-                                font=('GitLab Sans', 14), relief='flat',
+                                font=('GitLab Sans', 14), relief='flat', takefocus=0,
                                 command=more_func)
         more_button.pack(side="bottom", fill="x", expand=True)
 
@@ -196,10 +197,11 @@ def select_all(event):
 input = tk.Entry(root, width=40, bg="#292929", fg="white", bd=1,
                  highlightbackground='#484848', highlightcolor="gray", justify="center",
                  font=('GitLab Sans', 14), relief='flat', insertbackground='white',
-                 selectbackground="blue", selectforeground="white")
+                 selectbackground="blue", selectforeground="white", takefocus=0)
 input.pack(pady=20)
 input.bind("<Control-a>", select_all)
 input.bind('<Return>', lambda p=1: search(page.get()))
+input.bind('<Tab>', lambda event: root.focus_set())
 
 canvas = tk.Canvas(root,bg="black", width=850, borderwidth=0, highlightthickness=0)
 scrollbar = tk.Scrollbar(root, orient="vertical", command=canvas.yview)
@@ -271,6 +273,7 @@ play_button = tk.Label(miniplayer, textvariable=curr_status,
                        bg="black", fg="white", font=("monospace", 22))
 play_button.pack(side=tk.BOTTOM)
 play_button.bind("<Button-1>", lambda event: toggle_play())
+root.bind("<space>", toggle_play)
 
 root.protocol("WM_DELETE_WINDOW", on_app_close)
 root.mainloop()
