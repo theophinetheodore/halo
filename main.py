@@ -17,6 +17,7 @@ Gst.init(None)
 json_data = None
 player = Gst.ElementFactory.make('playbin', 'player')
 is_playing = False
+more_button = None
 
 root = tk.Tk()
 
@@ -25,6 +26,9 @@ curr_subtitle = tk.StringVar(value="---------")
 
 curr_time = tk.DoubleVar(value=0.0)
 curr_duration = tk.DoubleVar(value=100.0)
+
+page = tk.IntVar(value=1)
+max_pages = 10
 
 curr_status = tk.StringVar(value="⏸")
 
@@ -94,15 +98,16 @@ def on_app_close():
 
 ######################################################################
 
-def search(event=None):
+def search(event=None, p=1):
     global json_data
 
-    for widget in results_frame.winfo_children():
-        widget.destroy()
+    if p == 1:
+        for widget in results_frame.winfo_children():
+            widget.destroy()
 
     scrollbar.pack(side="right", fill="y", padx=(0, 10), pady=(10, 125))
     
-    url = f"https://www.jiosaavn.com/api.php?_format=json&_marker=0&api_version=4&ctx=web6dot0&__call=search.getResults&q={input.get()}&n=15"
+    url = f"https://www.jiosaavn.com/api.php?_format=json&_marker=0&api_version=4&ctx=web6dot0&__call=search.getResults&q={input.get()}&p={p}"
     
     response = requests.get(url)
     
@@ -112,6 +117,8 @@ def search(event=None):
 
 
 def add_search_items(json_data):
+    global more_button
+
     for song in json_data['results']:
         title = song['title']
         subtitle = song['subtitle']
@@ -159,6 +166,23 @@ def add_search_items(json_data):
         hr = tk.Frame(results_frame, bg="#292929", height=1)
         hr.pack(fill=tk.X, pady=(0, 10))
 
+    page.set(page.get() + 1)
+
+    def more_func():
+        if not page.get() > max_pages:
+            search(p=page.get())
+
+    if more_button == None:
+        more_button = tk.Button(results_frame, text="More", bg="#292929", fg="white", bd=1,
+                     highlightbackground='#484848', highlightcolor="gray", justify="center",
+                                font=('GitLab Sans', 14), relief='flat',
+                                command=more_func)
+        more_button.pack(side="bottom", fill="x", expand=True)
+
+    if page.get() == max_pages + 1:
+        more_button.pack_forget()
+
+
 ######################################################################
 
 root.configure(bg='#030303')
@@ -175,7 +199,7 @@ input = tk.Entry(root, width=40, bg="#292929", fg="white", bd=1,
                  selectbackground="blue", selectforeground="white")
 input.pack(pady=20)
 input.bind("<Control-a>", select_all)
-input.bind('<Return>', search)
+input.bind('<Return>', lambda p=1: search(page.get()))
 
 canvas = tk.Canvas(root,bg="black", width=850, borderwidth=0, highlightthickness=0)
 scrollbar = tk.Scrollbar(root, orient="vertical", command=canvas.yview)
