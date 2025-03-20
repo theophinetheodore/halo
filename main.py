@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import requests
 from io import BytesIO
 from pyDes import *
@@ -31,6 +32,23 @@ page = tk.IntVar(value=1)
 max_pages = 10
 
 curr_status = tk.StringVar(value="⏸")
+
+######################################################################
+
+style = ttk.Style(root)
+style.layout('arrowless.Vertical.TScrollbar', 
+         [('Vertical.Scrollbar.trough',
+           {'children': [('Vertical.Scrollbar.thumb', 
+                          {'expand': '1', 'sticky': 'nswe'})],
+            'sticky': 'ns'})])
+
+style.configure('arrowless.Vertical.TScrollbar',
+                width=5,
+                background='gray',
+                troughcolor='black',
+                gripcolor='gray',
+                highlightbackground='black',
+                borderwidth=0)
 
 ######################################################################
 
@@ -205,8 +223,8 @@ input.bind('<Return>', lambda p=1: search(page.get()))
 input.bind('<Tab>', lambda event: root.focus_set())
 
 canvas = tk.Canvas(root,bg="black", width=850, borderwidth=0, highlightthickness=0)
-scrollbar = tk.Scrollbar(root, orient="vertical", command=canvas.yview)
-scrollbar.config(width=10, bg='#484848', activebackground='#484848', highlightbackground='black', troughcolor="black", bd=0)
+
+scrollbar = ttk.Scrollbar(root, orient="vertical", command=canvas.yview, style='arrowless.Vertical.TScrollbar')
 
 results_frame = tk.Frame(canvas, bg="black", width=850)
 results_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
