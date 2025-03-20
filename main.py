@@ -98,15 +98,18 @@ def search(event=None):
 
     for widget in results_frame.winfo_children():
         widget.destroy()
+
+    scrollbar.pack(side="right", fill="y", padx=(0, 10), pady=(10, 125))
     
-    user_input = input.get()
-    
-    url = f"https://www.jiosaavn.com/api.php?_format=json&_marker=0&api_version=4&ctx=web6dot0&__call=search.getResults&q={user_input}&n=15"
+    url = f"https://www.jiosaavn.com/api.php?_format=json&_marker=0&api_version=4&ctx=web6dot0&__call=search.getResults&q={input.get()}&n=15"
     
     response = requests.get(url)
     
     json_data = response.json()
     
+    threading.Thread(target=add_search_items, args=(json_data,)).start()
+
+def add_search_items(json_data):
     for song in json_data['results']:
         title = song['title']
         subtitle = song['subtitle']
@@ -151,8 +154,6 @@ def search(event=None):
 
         hr = tk.Frame(results_frame, bg="#292929", height=1)
         hr.pack(fill=tk.X, pady=(0, 10))
-
-    scrollbar.pack(side="right", fill="y", padx=(0, 10), pady=(10, 125))
 
 ######################################################################
 
