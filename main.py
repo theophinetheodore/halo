@@ -53,10 +53,10 @@ def decrypt_url(url):
     dec_url = des_cipher.decrypt(enc_url, padmode=PAD_PKCS5).decode('utf-8')
     dec_url = dec_url.replace("_96.mp4", "_320.mp4")
 
-    player.set_property('uri', dec_url)
-    player.set_state(Gst.State.PLAYING)
     is_playing = True
 
+    player.set_property('uri', dec_url)
+    player.set_state(Gst.State.PLAYING)
 
     bus = player.get_bus()
     bus.timed_pop_filtered(Gst.CLOCK_TIME_NONE, Gst.MessageType.EOS)
@@ -79,6 +79,7 @@ def update():
 
     start.configure(text=f"{(curr_time.get() / curr_duration.get()) * 100:.2f}%")
     slider.configure(width=(curr_time.get() / curr_duration.get() * 800))
+
     root.after(1000, update)
 
 ######################################################################
@@ -95,6 +96,16 @@ def toggle_play():
         curr_status.set("⏸")
     
     is_playing = not is_playing
+
+######################################################################
+
+def on_app_close():
+    global player
+
+    player.get_bus().post(Gst.Message.new_eos())
+    player.set_state(Gst.State.NULL)
+    player = None
+    root.destroy()
 
 ######################################################################
 
@@ -234,4 +245,5 @@ play_button = tk.Label(playbox, textvariable=curr_status, bg="black", fg="white"
 play_button.pack(side=tk.BOTTOM)
 play_button.bind("<Button-1>", lambda event: toggle_play())
 
+root.protocol("WM_DELETE_WINDOW", on_app_close)
 root.mainloop()
