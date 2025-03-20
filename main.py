@@ -1,13 +1,10 @@
 import tkinter as tk
-from tkinter import ttk
 import requests
 from io import BytesIO
 from pyDes import *
 import base64
 import threading
 from PIL import Image, ImageTk
-
-######################################################################
 
 import gi
 gi.require_version('Gst', '1.0')
@@ -23,15 +20,6 @@ is_playing = False
 
 root = tk.Tk()
 
-style = ttk.Style()
-style.theme_use('alt')
-style.configure("TScale", 
-                troughcolor="#292929",
-                background="black",
-                sliderrelief="flat",
-                lightcolor="white",
-                sliderlength=30)
-
 curr_title = tk.StringVar(value="---------")
 curr_subtitle = tk.StringVar(value="---------")
 
@@ -41,6 +29,13 @@ curr_duration = tk.DoubleVar(value=100.0)
 curr_status = tk.StringVar(value="⏸")
 
 ######################################################################
+
+def play_song(enc, title, subtitle):
+    curr_title.set(title)
+    curr_subtitle.set(subtitle)
+    threading.Thread(target=decrypt_url, args=(enc,)).start()
+    update()
+
 
 def decrypt_url(url):
     global is_playing
@@ -61,21 +56,10 @@ def decrypt_url(url):
     bus = player.get_bus()
     bus.timed_pop_filtered(Gst.CLOCK_TIME_NONE, Gst.MessageType.EOS)
 
-######################################################################
-
-def play_song(enc, title, subtitle):
-    # global scale
-    global start
-
-    curr_title.set(title)
-    curr_subtitle.set(subtitle)
-    threading.Thread(target=decrypt_url, args=(enc,)).start()
-    update()
 
 def update():
     curr_time.set(player.query_position(Gst.Format.TIME)[1] / Gst.SECOND)
     curr_duration.set(player.query_duration(Gst.Format.TIME)[1] / Gst.SECOND)
-    # scale.configure(to=curr_duration.get())
 
     start.configure(text=f"{(curr_time.get() / curr_duration.get()) * 100:.2f}%")
     slider.configure(width=(curr_time.get() / curr_duration.get() * 800))
@@ -156,7 +140,12 @@ def search(event=None):
         highlight.pack(fill=tk.Y, side="right")
 
         song_container.pack(pady=(0, 10))
+
         song_container.bind("<Button-1>", lambda event, enc=enc, title=title, subtitle=subtitle: play_song(enc, title, subtitle))
+        song_title.bind("<Button-1>", lambda event, enc=enc, title=title, subtitle=subtitle: play_song(enc, title, subtitle))
+        song_subtitle.bind("<Button-1>", lambda event, enc=enc, title=title, subtitle=subtitle: play_song(enc, title, subtitle))
+        song_img.bind("<Button-1>", lambda event, enc=enc, title=title, subtitle=subtitle: play_song(enc, title, subtitle))
+
         song_container.bind("<Enter>", lambda event, cont=highlight: cont.config(bg='red'))
         song_container.bind("<Leave>", lambda event, cont=highlight: cont.config(bg='black'))
 
@@ -170,9 +159,17 @@ def search(event=None):
 root.configure(bg='#030303')
 root.title("music")
 
-input = tk.Entry(root, width=40, bg="#292929", bd=1, highlightbackground='#484848', highlightcolor="gray", justify="center",
-                 fg="white", font=('GitLab Sans', 14), relief='flat', insertbackground='white')
+def select_all(event):
+    input.select_range(0, tk.END)
+    input.icursor(tk.END)
+    return "break"
+
+input = tk.Entry(root, width=40, bg="#292929", fg="white", bd=1,
+                 highlightbackground='#484848', highlightcolor="gray", justify="center",
+                 font=('GitLab Sans', 14), relief='flat', insertbackground='white',
+                 selectbackground="blue", selectforeground="white")
 input.pack(pady=20)
+input.bind("<Control-a>", select_all)
 input.bind('<Return>', search)
 
 canvas = tk.Canvas(root,bg="black", width=850, borderwidth=0, highlightthickness=0)
@@ -196,7 +193,7 @@ playbox = tk.Frame(root, bg="black", highlightbackground="#292929",
                    highlightcolor="#292929", highlightthickness=1, relief="groove")
 playbox.place(relx=0.5, rely=1.0, anchor='s', width=800, y=-10)
 
-slider = tk.Frame(playbox, bg="red", height=4)
+slider = tk.Frame(playbox, bg="red", height=6)
 slider.pack(side="top", anchor="w")
 
 def on_click(event): update_seekbar(event.x)
@@ -217,15 +214,6 @@ durbox.pack(fill="both", expand=True)
 
 start = tk.Label(durbox, font=("GitLab Sans", 8), bg="black", fg="white")
 start.pack(side="left", padx=(5, 0))
-
-# scale = ttk.Scale(durbox, variable=curr_time, from_=curr_time.get(), to=curr_duration.get(), orient=tk.HORIZONTAL)
-# scale.pack(side="left", fill=tk.X, expand=True)
-#
-# def on_scale_change(event):
-#     position_ns = curr_time.get() * Gst.SECOND
-#     player.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT, position_ns)
-#
-# scale.bind("<ButtonRelease-1>", on_scale_change)
 
 end = tk.Label(durbox, textvariable=curr_duration, font=("GitLab Sans", 8), bg="black", fg="white")
 end.pack(side="right", padx=(0, 5))
