@@ -41,6 +41,7 @@ def decrypt_url(url):
     global is_playing
     global player
 
+    player.get_bus().post(Gst.Message.new_eos())
     player.set_state(Gst.State.NULL)
 
     des_cipher = des(b"38346591", ECB, b"\0\0\0\0\0\0\0\0", pad=None, padmode=PAD_PKCS5)
