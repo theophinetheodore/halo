@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=Halo
+GenericName=Halo
+Comment=Streaming music player.
+StartupNotify=true
+StartupWMClass=Halo
+TryExec=/usr/bin/halo
+Exec=/usr/bin/halo
+Terminal=false
+Icon=brave-desktop
+Type=Application
+Categories=Music

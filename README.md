@@ -1,8 +1,12 @@
-# halo
+<img src="halo.png" align="center">
+
+<h1 align="center">halo</h1>
+
+a jiosaavn client made with tkinter.
 
 ![halo](halo.webp)
 
-a jiosaavn client made with tkinter.
+NB: might not work outside india, because jiosaavn api.
 
 ## installation
 
