@@ -1,3 +1,5 @@
+#!/bin/python3
+
 import tkinter as tk
 from tkinter import ttk
 import requests
@@ -291,7 +293,7 @@ subtitle_label.pack(side="right", padx=(0, 5))
 play_button = tk.Label(miniplayer, textvariable=curr_status,
                        bg="black", fg="white", font=("monospace", 22))
 play_button.pack(side=tk.BOTTOM)
-play_button.bind("<Button-1>", lambda event: toggle_play())
+play_button.bind("<Button-1>", lambda event: toggle_play(event))
 root.bind("<space>", toggle_play)
 
 root.protocol("WM_DELETE_WINDOW", on_app_close)
