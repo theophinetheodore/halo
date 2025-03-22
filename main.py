@@ -208,7 +208,7 @@ def add_search_items(json_data):
 ######################################################################
 
 root.configure(bg='#030303')
-root.title("music")
+root.title("Halo")
 
 def select_all(event):
     input.select_range(0, tk.END)
@@ -222,7 +222,6 @@ input = tk.Entry(root, width=40, bg="#292929", fg="white", bd=1,
 input.pack(pady=20)
 input.bind("<Control-a>", select_all)
 input.bind('<Return>', lambda p=1: search(page.get()))
-input.bind('<Tab>', lambda event: root.focus_set())
 
 canvas = tk.Canvas(root,bg="black", width=850, borderwidth=0, highlightthickness=0)
 
