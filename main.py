@@ -55,6 +55,9 @@ style.configure('arrowless.Vertical.TScrollbar',
 ######################################################################
 
 def play_song(enc, title, subtitle):
+    if miniplayer.winfo_exists():
+        miniplayer.place(relx=0.5, rely=1.0, anchor='s', width=800, y=-10)
+
     curr_title.set(title)
     curr_subtitle.set(subtitle)
     threading.Thread(target=decrypt_url, args=(enc,)).start()
@@ -242,7 +245,6 @@ canvas.pack(side="left", fill="y", expand=True, pady=(10, 125))
 
 miniplayer = tk.Frame(root, bg="black", highlightbackground="#292929",
                    highlightcolor="#292929", highlightthickness=1, relief="groove")
-miniplayer.place(relx=0.5, rely=1.0, anchor='s', width=800, y=-10)
 
 ######################################################################
 
