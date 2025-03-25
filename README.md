@@ -2,7 +2,9 @@
 
 <img src="halomusic.png">
 
-an attempt at trying to make a JioSaavn frontend with Tkinter.
+an attempt at trying to make a JioSaavn frontend with Tkinter.  
+just simple search-play, no fancy things.  
+idk i don't wanna fire up a whole browser and youtube music just to listen to one song.
 
 ![halo](halo.webp)
  
@@ -17,8 +19,9 @@ an attempt at trying to make a JioSaavn frontend with Tkinter.
 
 - loop
 - play next song automatically
-- no playlist functionality
-- no albums, artists, playlists, radio
+- playlist functionality
+- lyrics
+- albums, artists, playlists, radio
 - everything else (bruh)
 
 NB: might not work outside india, because jiosaavn api.
