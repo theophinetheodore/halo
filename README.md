@@ -1,13 +1,13 @@
-# halo
-
 <img src="halomusic.png">
 
+# halo
+
+https://github.com/user-attachments/assets/d4d9286e-d749-4e0b-ba7b-c15721211ced
+
 an attempt at trying to make a JioSaavn frontend with Tkinter.  
-just simple search-play, no fancy things.  
+just dead-simple search-n-play, no fancy things.  
 idk i don't wanna fire up a whole browser and youtube music just to listen to one song.
 
-![halo](halo.webp)
- 
  ### what it can do
  
  - search for music
