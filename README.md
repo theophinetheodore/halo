@@ -1,6 +1,6 @@
 # halo
 
-<img src="halo.png">
+<img src="halomusic.png">
 
 a jiosaavn client made with tkinter.
 

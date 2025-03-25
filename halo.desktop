@@ -8,6 +8,6 @@ StartupWMClass=Halo
 TryExec=/usr/bin/halo
 Exec=/usr/bin/halo
 Terminal=false
-Icon=brave-desktop
+Icon=/usr/share/icons/halomusic.png
 Type=Application
 Categories=Music

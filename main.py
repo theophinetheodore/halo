@@ -297,7 +297,7 @@ play_button.pack(side=tk.BOTTOM)
 play_button.bind("<Button-1>", lambda event: toggle_play(event))
 root.bind("<space>", toggle_play)
 
-root.wm_iconphoto(False, ImageTk.PhotoImage(Image.open('/usr/share/icons/halo.png')))
+root.wm_iconphoto(False, ImageTk.PhotoImage(Image.open('/usr/share/icons/halomusic.png')))
 
 root.protocol("WM_DELETE_WINDOW", on_app_close)
 root.mainloop()
