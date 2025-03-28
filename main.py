@@ -100,15 +100,14 @@ def toggle_play(event):
     global player
     global is_playing
 
-    if not isinstance(event.widget, tk.Entry):
-        if is_playing:
-            player.set_state(Gst.State.PAUSED)
-            curr_status.set("▶︎")
-        else:
-            player.set_state(Gst.State.PLAYING)
-            curr_status.set("⏸")
-        
-        is_playing = not is_playing
+    if is_playing:
+        player.set_state(Gst.State.PAUSED)
+        curr_status.set("▶︎")
+    else:
+        player.set_state(Gst.State.PLAYING)
+        curr_status.set("⏸")
+    
+    is_playing = not is_playing
 
 ######################################################################
 
@@ -295,7 +294,7 @@ play_button = tk.Label(miniplayer, textvariable=curr_status,
                        bg="black", fg="white", font=("monospace", 22))
 play_button.pack(side=tk.BOTTOM)
 play_button.bind("<Button-1>", lambda event: toggle_play(event))
-root.bind("<space>", toggle_play)
+root.bind("<Escape>", toggle_play)
 
 root.wm_iconphoto(False, ImageTk.PhotoImage(Image.open('/usr/share/icons/halomusic.png')))
 
