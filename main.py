@@ -92,6 +92,12 @@ def update():
     start.configure(text=f"{(curr_time.get() / curr_duration.get()) * 100:.2f}%")
     slider.configure(width=(curr_time.get() / curr_duration.get() * 800))
 
+    if curr_time.get() > 0.0 and round(curr_time.get()) == round(curr_duration.get()):
+        curr_time.set(0.0)
+        print(curr_time.get())
+        player.set_state(Gst.State.NULL)
+        player.set_state(Gst.State.PLAYING)
+
     root.after(1000, update)
 
 ######################################################################
